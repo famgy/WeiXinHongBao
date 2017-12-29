@@ -35,7 +35,7 @@ public class RobService extends AccessibilityService {
                 className = event.getClassName().toString();
                 if (className.equals("com.tencent.mm.ui.LauncherUI")) {
                     Log.e("===RobService===", "com.tencent.mm.ui.LauncherUI");
-                    if (true == isOpenedPacket) {
+                    if ((true == isOpenedPacket) && (true == MainActivity.m_replay)) {
                         replayMsg();
                     }
                     getPacket();
@@ -151,7 +151,10 @@ public class RobService extends AccessibilityService {
                 for (AccessibilityNodeInfo item : infos) {
                     Log.i("===RobService===", "open money！");
                     item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    isOpenedPacket = true;
+                    if (true == MainActivity.m_replay)
+                    {
+                        isOpenedPacket = true;
+                    }
                 }
             }
         }
@@ -199,7 +202,11 @@ public class RobService extends AccessibilityService {
                     ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboardManager.setPrimaryClip(clip);
                     item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    isOpenedPacket = false;
+
+                    if (true == MainActivity.m_replay)
+                    {
+                        isOpenedPacket = true;
+                    }
                 }
             }
 
