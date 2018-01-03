@@ -35,8 +35,12 @@ public class RobService extends AccessibilityService {
                 className = event.getClassName().toString();
                 if (className.equals("com.tencent.mm.ui.LauncherUI")) {
                     Log.e("===RobService===", "com.tencent.mm.ui.LauncherUI");
-                    if ((true == isOpenedPacket) && (true == MainActivity.m_replay)) {
-                        replayMsg();
+                    if (true == isOpenedPacket) {
+                        if (true == MainActivity.m_replay) {
+                            replayMsg();
+                        }
+                        isOpenedPacket = false;
+                        performGlobalAction(GLOBAL_ACTION_BACK);
                     }
                     getPacket();
                 } else if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI")) {
@@ -44,7 +48,9 @@ public class RobService extends AccessibilityService {
                     openPacket();
                 } else if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI")) {
                     Log.e("===RobService===", "com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI");
-                    closePacket();
+                    if (true == isOpenedPacket) {
+                        closePacket();
+                    }
                 }
 
                 break;
@@ -151,10 +157,8 @@ public class RobService extends AccessibilityService {
                 for (AccessibilityNodeInfo item : infos) {
                     Log.i("===RobService===", "open money！");
                     item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    if (true == MainActivity.m_replay)
-                    {
-                        isOpenedPacket = true;
-                    }
+
+                    isOpenedPacket = true;
                 }
             }
         }
@@ -164,6 +168,20 @@ public class RobService extends AccessibilityService {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo != null) {
             List<AccessibilityNodeInfo> infos = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/ho");
+            if (null != infos && !infos.isEmpty()) {
+                nodeInfo.recycle();
+                for (AccessibilityNodeInfo item : infos) {
+                    Log.i("===RobService===", "Editor content！");
+                    item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                }
+            }
+        }
+    }
+
+    private void closeDialog() {
+        AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
+        if (nodeInfo != null) {
+            List<AccessibilityNodeInfo> infos = nodeInfo.findAccessibilityNodeInfosByViewId("android:id/text1");
             if (null != infos && !infos.isEmpty()) {
                 nodeInfo.recycle();
                 for (AccessibilityNodeInfo item : infos) {
@@ -202,11 +220,6 @@ public class RobService extends AccessibilityService {
                     ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboardManager.setPrimaryClip(clip);
                     item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-
-                    if (true == MainActivity.m_replay)
-                    {
-                        isOpenedPacket = true;
-                    }
                 }
             }
 
