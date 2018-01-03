@@ -21,8 +21,8 @@ public class MainActivity extends Activity {
         System.loadLibrary("native-lib");
     }
 
-    public static boolean m_replay = false;
     Button bt_replay;
+    private Button bt_service_switch;
 
     private AccessibilityManager mAccessibilityManager;
     private static final String ServerName = "com.famgy.www.weixinhongbao/.RobService";
@@ -36,27 +36,30 @@ public class MainActivity extends Activity {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
 
-        mAccessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
-
-        if (false == checkEnabledAccessibilityService()) {
-            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+        bt_service_switch = (Button)findViewById(R.id.bt_service_switch);
+        bt_service_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
 
         bt_replay = (Button)findViewById(R.id.bt_replay);
         bt_replay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (false == m_replay) {
-                    m_replay = true;
+                if (false == RobService.m_replay) {
+                    RobService.m_replay = true;
                     bt_replay.setText("关闭回复");
                 } else {
-                    m_replay = false;
+                    RobService.m_replay = false;
                     bt_replay.setText("启动回复");
                 }
             }
         });
+
     }
 
     private boolean checkEnabledAccessibilityService() {
@@ -69,6 +72,19 @@ public class MainActivity extends Activity {
         }
 
         return false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        bt_service_switch = (Button)findViewById(R.id.bt_service_switch);
+        mAccessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+        if (false == checkEnabledAccessibilityService()) {
+            bt_service_switch.setText("开启服务");
+        } else {
+            bt_service_switch.setText("关闭服务");
+        }
     }
 
     /**

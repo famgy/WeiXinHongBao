@@ -19,6 +19,7 @@ import java.util.List;
 public class RobService extends AccessibilityService {
 
     private boolean isOpenedPacket = false;
+    public static boolean m_replay = false;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -36,7 +37,7 @@ public class RobService extends AccessibilityService {
                 if (className.equals("com.tencent.mm.ui.LauncherUI")) {
                     Log.e("===RobService===", "com.tencent.mm.ui.LauncherUI");
                     if (true == isOpenedPacket) {
-                        if (true == MainActivity.m_replay) {
+                        if (true == m_replay) {
                             replayMsg();
                         }
                         isOpenedPacket = false;
